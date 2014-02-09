@@ -1,0 +1,24 @@
+{
+	"manifest_version": 2,
+
+	"name": "Chrome Tab Search",
+	"version": "1.0",
+	"description": "Quickly search your open tabs to change between them.",
+	"icons": {
+		"128": "icon_128.png",
+		"48": "icon_48.png",
+		"16": "icon_16.png"
+	},
+	"permissions": [
+		"activeTab"
+	],
+
+	"browser_action": {
+		"default_icon": {
+			"38": "icon_38.png",
+			"19": "icon_19.png"
+		},
+		"default_popup": "popup.html",
+		"default_title": "Chome Tab Search"
+	}
+}
