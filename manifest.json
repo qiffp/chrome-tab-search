@@ -10,7 +10,7 @@
     "16": "images/icon_16.png"
   },
   "permissions": [
-    "activeTab"
+    "tabs"
   ],
 
   "browser_action": {
