@@ -1,11 +1,18 @@
-function makeListWithArray(array) {
+function makeTabListWithArray(tabs, activeTabIndex) {
   var list = document.createElement('ul');
   list.id = 'results_list';
 
-  for (var i = 0; i < array.length; i++) {
+  for (var i = 0; i < tabs.length; i++) {
     var item = document.createElement('li');
     item.className = 'result';
-    item.appendChild(document.createTextNode(array[i]));
+    if (i === activeTabIndex) {
+      var boldElement = document.createElement('b');
+      boldElement.appendChild(document.createTextNode(tabs[i]));
+      item.appendChild(boldElement);
+    } else {
+      item.appendChild(document.createTextNode(tabs[i]));
+    }
+
     list.appendChild(item);
   }
 
@@ -24,11 +31,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }, []);
 
     var titles = [];
-    for (var i = 0; i < tabs.length; i++) {
-      titles[i] = tabs[i].title;
-    }
-    resultsSection.appendChild(makeListWithArray(titles));
-    resultsList = resultsSection.lastChild;
+    var activeTabId;
+    var activeTabIndex;
+    chrome.tabs.query({active: true, currentWindow: true}, function(activeTabs) {
+      activeTabId = activeTabs[0].id;
+
+      for (var i = 0; i < tabs.length; i++) {
+        titles[i] = tabs[i].title;
+        if (tabs[i].id === activeTabId) {
+          activeTabIndex = i;
+        }
+      }
+
+      resultsSection.appendChild(makeTabListWithArray(titles, activeTabIndex));
+      resultsList = resultsSection.lastChild;
+    });
   });
 
   resultsSection.addEventListener('mouseup', function(e) {
