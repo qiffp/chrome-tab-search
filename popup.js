@@ -35,6 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.target && e.target.className === 'result') {
       var clickIndex = Array.prototype.indexOf.call(resultsList.childNodes, e.target);
       var tabId = tabs[clickIndex].id;
+      var tabWindowId = tabs[clickIndex].windowId;
+      chrome.windows.getCurrent(function(window) {
+        if (window.id !== tabWindowId) {
+          chrome.windows.update(tabWindowId, {focused: true});
+        }
+      });
       chrome.tabs.update(tabId, {active: true});
     }
   });
