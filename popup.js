@@ -30,11 +30,26 @@ function makeTabListWithArray(tabs, activeTabId) {
   return list;
 }
 
+function searchStringArray(stringArray, query) {
+  var results = [];
+  var regexp = new RegExp(query, 'ig');
+
+  for (var i = 0; i < stringArray.length; i++) {
+    if (stringArray[i].match(regexp)) {
+      results.push(i);
+    }
+  }
+
+  return results;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   var searchbar = document.getElementById('query');
   var resultsSection = document.getElementById('results_section');
   var resultsList;
   var tabs = [];
+  var tabTitles = [];
+  var tabUrls = [];
 
   chrome.windows.getAll({populate: true}, function(windows) {
     tabs = windows.reduce(function(previous, current) {
@@ -48,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
       resultsSection.appendChild(makeTabListWithArray(tabs, activeTabId));
       resultsList = resultsSection.lastChild;
     });
+
+    for (var i = 0; i < tabs.length; i++) {
+      tabTitles[i] = tabs[i].title;
+      tabUrls[i] = tabs[i].url;
+    }
   });
 
   resultsSection.addEventListener('mouseup', function(e) {
@@ -61,6 +81,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       chrome.tabs.update(tabId, {active: true});
+    }
+  });
+
+  searchbar.addEventListener('keyup', function(e) {
+    var titleResults = searchStringArray(tabTitles, searchbar.value);
+    var urlResults = searchStringArray(tabUrls, searchbar.value);
+    var results = titleResults.concat(urlResults);
+
+    var list = document.getElementsByClassName('result');
+    for (var i = 0; i < tabs.length; i++) {
+      if (results.indexOf(i) == -1) {
+        list[i].style.display = 'none';
+      } else {
+        list[i].style.display = 'list-item';
+      }
     }
   });
 });
